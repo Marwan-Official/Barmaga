@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بنك نظري برمجة 2026 🔥💻</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #3b82f6;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --correct-bg: #d1fae5;
+            --correct-border: #10b981;
+            --correct-text: #065f46;
+            --wrong-bg: #fee2e2;
+            --wrong-border: #ef4444;
+            --wrong-text: #991b1b;
+            --q-bg: #f8fafc;
+            --q-accent: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            padding: 25px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            text-align: center;
+            color: #0ea5e9;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 0 0 5px 0;
+        }
+        
+        .header-subtitle {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+        }
+
+        .divider {
+            border: none;
+            border-top: 2px dashed #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .progress-section {
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        #progress {
+            height: 100%;
+            background: var(--primary-blue);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .stats .score { color: #10b981; }
+
+        .question-box {
+            background: var(--q-bg);
+            border-left: 4px solid var(--q-accent);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            direction: ltr;
+        }
+
+        .option:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .option-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .option-status {
+            font-size: 0.9rem;
+            font-weight: 700;
+            direction: rtl;
+        }
+
+        /* States */
+        .option.correct {
+            background: var(--correct-bg) !important;
+            border-color: var(--correct-border) !important;
+        }
+        .option.correct .option-text, .option.correct .option-status {
+            color: var(--correct-text);
+        }
+
+        .option.wrong {
+            background: var(--wrong-bg) !important;
+            border-color: var(--wrong-border) !important;
+        }
+        .option.wrong .option-text, .option.wrong .option-status {
+            color: var(--wrong-text);
+        }
+
+        .option.disabled {
+            pointer-events: none;
+        }
+
+        /* Explanation Box */
+        .explanation-box {
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .explanation-box.wrong-exp {
+            background: var(--wrong-bg);
+            border-right: 5px solid var(--wrong-border);
+        }
+
+        .explanation-box.correct-exp {
+            background: var(--correct-bg);
+            border-right: 5px solid var(--correct-border);
+        }
+
+        .explanation-title {
+            font-weight: 800;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .explanation-box.wrong-exp .explanation-title { color: var(--wrong-text); }
+        .explanation-box.correct-exp .explanation-title { color: var(--correct-text); }
+
+        .explanation-text {
+            color: #1f2937;
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Next Button */
+        .next-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+            transition: background 0.2s;
+        }
+
+        .next-btn:hover { background: #2563eb; }
+
+        #result-screen {
+            text-align: center;
+            display: none;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin: 20px 0;
+            direction: ltr;
+        }
+
+        /* --- Footer & Modal Styles --- */
+        .secret-footer {
+            margin-top: auto;
+            padding: 15px;
+            cursor: pointer;
+            color: var(--text-gray);
+            font-weight: 700;
+            text-decoration: underline;
+            text-decoration-style: dashed;
+            transition: color 0.2s;
+        }
+        .secret-footer:hover { color: var(--primary-blue); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px; /* Ensure space around modal on small screens */
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px; /* Reduced to look better on mobile */
+            max-height: 85vh; /* Prevents modal from overflowing screen vertically */
+            overflow-y: auto; /* Adds scroll if text is too long */
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-content h3 {
+            color: #f59e0b; /* Amber */
+            font-size: 1.3rem; /* Slightly smaller for mobile */
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            color: var(--text-dark);
+            font-size: 0.95rem; /* Adjusted to fix the 'zoomed in' feel */
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .modal-signoff {
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .modal-poet {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 10px;
+        }
+
+        .close-modal-btn {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+            width: 100%; /* Full width button for easier tapping */
+        }
+
+        .close-modal-btn:hover {
+            background: #d97706;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz-box">
+    <h2 class="header-title">بنك نظري برمجة 2026 🔥💻</h2>
+    <h4 class="header-subtitle">مين قال إن البرمجة مبتحبش البصمجة!؟ 😂</h4>
+    <hr class="divider">
+
+    <div class="progress-section">
+        <div class="progress-bar"><div id="progress"></div></div>
+        <div class="stats">
+            <div>السؤال <span id="current-q-num">1</span> من 116</div>
+            <div class="score">الدرجة: <span id="current-score">0</span></div>
+        </div>
+    </div>
+
+    <div class="question-box">
+        <p class="question-text" id="q-text">Loading question...</p>
+    </div>
+
+    <div class="options-container" id="options-container">
+        <!-- Options will be injected here -->
+    </div>
+
+    <div class="explanation-box" id="explanation-box">
+        <div class="explanation-title" id="explanation-title">التفسير الفني:</div>
+        <p class="explanation-text" id="explanation-text"></p>
+    </div>
+
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">السؤال التالي ←</button>
+</div>
+
+<div class="quiz-container" id="result-screen">
+    <h2 class="header-title">انتهى الاختبار! 🎉</h2>
+    <hr class="divider">
+    <p style="font-size: 1.2rem; font-weight: 600; color: var(--text-gray);">لقد أتممت أسئلة النظري بنجاح</p>
+    <div class="result-score"><span id="final-score">0</span> / 116</div>
+    <button class="next-btn" style="display: block;" onclick="location.reload()">إعادة الاختبار ↺</button>
+</div>
+
+<!-- Secret Footer -->
+<div class="secret-footer" onclick="openModal()">
+    اضغط هنا متخافش 🎁
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="secretModal">
+    <div class="modal-content">
+        <h3>كلمة من القلب ❤️</h3>
+        <p>
+            شكراً جداً لكل زمايلنا في إعدادي هندسة.. الأيام دي مش هتتنسي، ومسير الدنيا تفرقنا وكل واحد يخش قسمه ويشق طريقه.
+            <br><br>
+            وشكر خاص جداً لليدرز الدفعة.. شكراً لكل واحد ساعدني أفهم أي حاجة في أي مادة، ويسر عليا أي معلومة، أو ساعدني في مسألة، أو ساعدني بأي حاجة عموماً. وشكراً لكل واحد ساعد زمايله وما بخلش عليهم بمعلومة. أنتم بجد "مهندسين" بجدعنتكم ومساعدتكم لبعض عشان كلنا نكون أحسن.
+            <br><br>
+            ربنا يوفقنا جميعاً، وأشوفكم على خير إن شاء الله! 🎓✨
+        </p>
+        
+        <div class="modal-signoff">تحياتي، مروان المغازي</div>
+        
+        <div class="modal-poet">
+            وكما قال الشاعر: يا حبيبي يا دكتور وليد 👌🏻👌🏻🌸🌸💗💗
+        </div>
+        
+        <button class="close-modal-btn" onclick="closeModal()">حبيبي تسلم ❤️</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // --- BATCH 1: ORIGINAL 38 QUESTIONS ---
+        { q: "'RAM' stands for", o: ["Random Access Memory", "Read Access Memory", "Read Arithmetic Memory", "Random Arithmetic Memory"], a: 0, exp: "مصطلح RAM هو اختصار لـ Random Access Memory وتعني ذاكرة الوصول العشوائي، وهي الذاكرة المؤقتة التي تفقد بياناتها عند انقطاع التيار." },
+        { q: "'ROM' stands for", o: ["read only memory", "random only memory", "readily object memory", "random available memory"], a: 0, exp: "مصطلح ROM هو اختصار لـ Read Only Memory وتعني ذاكرة القراءة فقط، وتحتفظ بالبيانات الأساسية لتشغيل الجهاز حتى بدون كهرباء." },
+        { q: "Devices that accepts data from outside computer and transfer into CPU are called:", o: ["input devices", "digital devices", "analogue devices", "truth table peripherals"], a: 0, exp: "الأجهزة التي تستقبل البيانات من الخارج وتدخلها للحاسوب (المعالج) تُسمى أجهزة الإدخال (Input Devices) مثل الكيبورد والماوس." },
+        { q: "Devices which are used to receive data from central processing unit are classified as:", o: ["output/input devices", "digital devices", "signaled devices", "output devices"], a: 3, exp: "الأجهزة التي تستقبل البيانات التي تمت معالجتها من الـ CPU لعرضها للمستخدم تُصنف كأجهزة إخراج (Output Devices) مثل الشاشة والطابعة." },
+        { q: "Place where large amounts of data are stored outside central processing unit is called", o: ["backing store", "peripherals", "control unit", "ALU unit"], a: 0, exp: "المكان المخصص لتخزين كميات هائلة من البيانات خارج المعالج المركزي يسمى التخزين الثانوي أو الاحتياطي (Backing Store)." },
+        { q: "If any instruction consist of any arithmetic operation, data is transferred to", o: ["quantitative unit", "qualitative unit", "arithmetic and logical unit", "central processing unit"], a: 2, exp: "أي عملية حسابية أو منطقية يتم تحويلها مباشرة إلى وحدة الحساب والمنطق (ALU) الموجودة داخل المعالج." },
+        { q: "Visual display unit is an example of", o: ["output device", "input/output devices", "backup devices", "mediums"], a: 0, exp: "وحدة العرض المرئي (VDU) والتي تُعرف بالشاشة، هي مثال مباشر على أجهزة الإخراج (Output Device)." },
+        { q: "Keyboard and mouse are", o: ["DC devices", "analogue devices", "truth table devices", "input devices"], a: 3, exp: "لوحة المفاتيح (Keyboard) والفأرة (Mouse) هي أدوات تُستخدم لإدخال البيانات، لذا تُصنف كأجهزة إدخال (Input Devices)." },
+        { q: "Large computers with wide range of peripheral devices are classified as", o: ["mainframe computers", "mini frame computers", "mainframe processors", "peripheral interface"], a: 0, exp: "الحواسيب الضخمة التي تدير شبكات واسعة من الأجهزة الطرفية تُصنف كحواسيب كبيرة (Mainframe Computers) وتُستخدم في المؤسسات الضخمة." },
+        { q: "Actual equipment of computer system that can be touched are", o: ["hardware", "software", "applications", "bugs"], a: 0, exp: "المكونات المادية الملموسة في الحاسوب يطلق عليها (Hardware)، على عكس البرمجيات (Software) غير الملموسة." },
+        { q: "Decoding and execution of instructions rapidly, one after another is called", o: ["ALU unit", "backup device", "keyboard", "control unit"], a: 3, exp: "وحدة التحكم (Control Unit) هي المسؤولة عن جلب التعليمات، فك تشفيرها (Decoding)، وتوجيه النظام لتنفيذها بالترتيب." },
+        { q: "A hard disk is divided into tracks, which are further subdivided into", o: ["clusters", "sectors", "vectors", "heads"], a: 1, exp: "القرص الصلب يُقسم فيزيائياً إلى مسارات دائرية (Tracks)، وهذه المسارات تُقسم بدورها إلى قطاعات أصغر تُسمى (Sectors)." },
+        { q: "Program which is used to control system performance is classified as", o: ["experimental program", "system program", "specialized program", "organized program"], a: 1, exp: "البرامج التي تدير وتتحكم في أداء الحاسوب وموارده تُعرف ببرامج النظام (System Programs) مثل نظام التشغيل." },
+        { q: "Examples of system programs includes", o: ["operating system of computer", "trace program", "compiler", "all of above"], a: 3, exp: "أنظمة التشغيل، المترجمات (Compilers)، وبرامج التتبع كلها تعتبر أمثلة على برامج النظام (System Programs)." },
+        { q: "Program which is readily available for computer users as a part of software package is classified as", o: ["library program", "program library", "software library", "directory library"], a: 0, exp: "البرامج أو الأكواد الجاهزة التي تُوفر للمستخدمين كجزء من حزمة برمجية تُسمى ببرامج المكتبة (Library Programs)." },
+        { q: "Secondary storage memory is basically", o: ["volatile memory", "non-volatile memory", "backup memory", "impact memory"], a: 1, exp: "الذاكرة الثانوية (مثل القرص الصلب) هي ذاكرة غير متطايرة (Non-volatile)، أي أنها لا تفقد بياناتها عند إغلاق الجهاز." },
+        { q: "When power is switched OFF, it will lost its data, such type of memory is classified as", o: ["volatile storage", "non volatile storage", "impact storage", "non impact storage"], a: 0, exp: "الذاكرة التي تفقد محتوياتها بمجرد انقطاع التيار الكهربائي (مثل الـ RAM) تُصنف كذاكرة متطايرة (Volatile Storage)." },
+        { q: "Hardware and software specifications are part of", o: ["computing requirements", "statement requirements", "system flowchart", "decision statement"], a: 0, exp: "تحديد مواصفات المكونات المادية والبرمجية المطلوبة لأي نظام يُعتبر جزءاً من متطلبات الحوسبة (Computing Requirements)." },
+        { q: "Diagram that represents steps or operations involved in any kind of process is called", o: ["system diagram", "management hierarchy", "flowcharts", "convenience diagrams"], a: 2, exp: "الرسم البياني الذي يوضح خطوات حل مشكلة أو تسلسل العمليات يُسمى المخطط الانسيابي (Flowchart)." },
+        { q: "__________ is the physical aspect of the computer that can be seen.", o: ["Hardware", "Software", "Operating system", "Application program"], a: 0, exp: "الهاردوير (Hardware) هو الجانب الفيزيائي والمادي للحاسوب الذي يمكن رؤيته ولمسه." },
+        { q: "__________ is the brain of a computer.", o: ["Hardware", "CPU", "Memory", "Disk"], a: 1, exp: "وحدة المعالجة المركزية (CPU) تُعتبر بمثابة العقل المدبر للحاسوب، حيث تقوم بمعالجة كافة البيانات والعمليات." },
+        { q: "Why do computers use zeros and ones?", o: ["represent any numbers and characters", "digital devices have two stable states", "binary numbers are simplest", "binary numbers are the bases"], a: 1, exp: "تستخدم الحواسيب الصفر والواحد لأن المكونات الإلكترونية الرقمية تعمل بناءً على حالتين مستقرتين فقط (تيار يمر = 1، تيار لا يمر = 0)." },
+        { q: "A computer's __________ is volatile; lost when power is off.", o: ["floppy disk", "hard disk", "flash stick", "CD-ROM", "memory"], a: 4, exp: "الذاكرة الرئيسية (Memory/RAM) هي الذاكرة المتطايرة في الحاسوب والتي تُفقد محتوياتها عند إيقاف التشغيل." },
+        { q: "Which of the following are storage devices?", o: ["floppy disk", "hard disk", "flash stick", "CD-ROM", "All of the above"], a: 4, exp: "جميع الخيارات المذكورة (الأقراص المرنة، الصلبة، الفلاشات، والأسطوانات) تُصنف كأجهزة تخزين بيانات." },
+        { q: "In flow chart, diamond shaped symbol is used to represent", o: ["decision box", "statement box", "error box", "if-statement box"], a: 0, exp: "في المخططات الانسيابية، يُستخدم الشكل المعين (Diamond) لتمثيل اتخاذ القرار (Decision Box) والذي ينتج عنه تفرع (نعم/لا)." },
+        { q: "In flowcharts, symbol of rectangle is used to represent", o: ["operations on data", "system process", "manual operations", "magnetic disc"], a: 0, exp: "الشكل المستطيل يُستخدم لتمثيل العمليات والمعالجة (Operations / Process) التي تتم على البيانات." },
+        { q: "To write a program sum of four integers, refinement first level includes", o: ["input four numbers", "calculate sum", "print values", "display values"], a: 0, exp: "لكتابة برنامج يجمع أربعة أرقام، الخطوة المنطقية الأولى دائماً هي إدخال هذه الأرقام (Input) قبل أي عملية حسابية." },
+        { q: "Part of algorithm repeated for fixed number of times", o: ["iteration", "selection", "sequence", "reverse action"], a: 0, exp: "تكرار جزء من الكود لعدد محدد من المرات يُطلق عليه مصطلح التكرار (Iteration أو Looping)." },
+        { q: "Task of defining problem is a part of", o: ["system analysis phase", "system design phase", "system implement phase", "relevance phase"], a: 0, exp: "مهمة تعريف المشكلة وتحديد المتطلبات هي الخطوة الأساسية في مرحلة تحليل النظام (System Analysis Phase)." },
+        { q: "In flowchart, parallelogram is used for representation of", o: ["general input symbol", "operation on data", "online use of keyboard", "output data screen"], a: 0, exp: "متوازي الأضلاع (Parallelogram) يُستخدم لتمثيل عمليات الإدخال والإخراج العامة (Input / Output) في المخطط الانسيابي." },
+        { q: "What is a flowchart?", o: ["A text-based way", "Programming language", "Diagram of set of instructions", "Bullet point list"], a: 2, exp: "المخطط الانسيابي هو رسم تخطيطي وتوضيحي (Diagram) لمجموعة من التعليمات وخطوات حل المشكلة بشكل متسلسل." },
+        { q: "In algorithms, the order of instructions is very important.", o: ["True", "False"], a: 0, exp: "صحيح (True). الخوارزمية تعتمد كلياً على الترتيب المنطقي للخطوات، فأي تغيير في الترتيب قد يؤدي لنتيجة خاطئة." },
+        { q: "In a flowchart how are symbols connected?", o: ["Not connected", "With lines and arrows", "With dashed lines", "With solid lines"], a: 1, exp: "الأشكال والرموز في المخططات الانسيابية تتصل ببعضها باستخدام خطوط وأسهم (Lines and Arrows) لتحديد اتجاه سير البرنامج." },
+        { q: "What is an Algorithm?", o: ["A chart", "Step-by-step instructions", "A decision", "A computer program"], a: 1, exp: "الخوارزمية (Algorithm) هي ببساطة سلسلة من التعليمات والخطوات المنطقية (Step-by-step) المكتوبة لحل مشكلة معينة." },
+        { q: "What symbol do flowcharts begin with?", o: ["oval", "parallelogram", "rectangle", "diamond"], a: 0, exp: "المخططات الانسيابية تبدأ دائماً بشكل بيضاوي (Oval أو Terminal) يحتوي على كلمة Start أو بداية." },
+        { q: "What symbol do flowcharts end with?", o: ["oval", "parallelogram", "rectangle", "diamond"], a: 0, exp: "بنفس طريقة البداية، تنتهي المخططات الانسيابية بالشكل البيضاوي (Oval) والذي يحتوي على كلمة End أو Stop." },
+        { q: "What symbol do flowcharts use to show an action or process?", o: ["oval", "parallelogram", "rectangle", "diamond"], a: 2, exp: "المستطيل (Rectangle) هو الرمز القياسي المستخدم للتعبير عن أي فعل، معالجة، أو عملية حسابية (Process/Action)." },
+        { q: "A benefit of using flowcharts is:", o: ["They help you program", "They write the program", "Help you visualise instructions", "They are easier"], a: 2, exp: "أهم ميزة للمخطط الانسيابي أنه يساعد المبرمج على تصور وتخيل منطق البرنامج والتعليمات (Visualise) قبل كتابة الكود." },
+
+        // --- BATCH 2: THEORETICAL QUESTIONS FROM EXAMS (Set 1) ---
+        { q: "_____ is a program that runs on a computer to manage and control a computer's activities.", o: ["Operating system", "Python", "Interpreter", "Compiler"], a: 0, exp: "نظام التشغيل (Operating System) هو البرنامج الأساسي الذي يدير موارد الحاسوب ويتحكم في كافة عملياته وتطبيقاته." },
+        { q: "Which of the following is not a character of the computer?", o: ["Speed", "Accuracy", "Intelligence", "Storage"], a: 2, exp: "الحاسوب يتميز بالسرعة والدقة والقدرة على التخزين، ولكنه لا يمتلك ذكاءً خاصاً به (Intelligence) بل ينفذ الأوامر المبرمجة فقط." },
+        { q: "There are _____ types of computers (based on size and processing power).", o: ["two", "three", "four", "five"], a: 2, exp: "تُصنف الحواسيب عادة إلى 4 أنواع رئيسية: الحواسيب الدقيقة (Microcomputers)، الصغيرة (Minicomputers)، الكبيرة (Mainframes)، والفائقة (Supercomputers)." },
+        { q: "Any computer must be able to:", o: ["accept data", "store data", "process data", "All Answers"], a: 3, exp: "أي نظام حاسوبي يجب أن يكون قادراً على استقبال البيانات (الإدخال)، تخزينها، ومعالجتها لإخراج المعلومات (All Answers)." },
+        { q: "Which of the following is not a part of a computer system?", o: ["Hardware", "Software", "Users", "None of the above"], a: 3, exp: "نظام الحاسوب يتكون بشكل أساسي من المكونات المادية (Hardware)، البرمجيات (Software)، والمستخدمين (Users). لذلك لا توجد إجابة مستبعدة." },
+        { q: "The control unit is used for:", o: ["Controlling the processor", "Controlling the operating system", "Controlling the hard disk", "None of the above"], a: 0, exp: "وحدة التحكم (Control Unit) هي جزء من المعالج (CPU) ومسؤوليتها الأساسية هي توجيه ومراقبة تدفق البيانات داخل المعالج والتحكم فيه." },
+        { q: "The ALU exists inside:", o: ["the memory", "the processor", "the control unit", "the output unit"], a: 1, exp: "وحدة الحساب والمنطق (ALU) هي أحد المكونات الرئيسية التي تتواجد داخل المعالج (Processor / CPU)." },
+        { q: "Which of the following is not a part of the output unit?", o: ["Monitor", "Scanner", "Speaker", "Printer"], a: 1, exp: "الماسح الضوئي (Scanner) يُستخدم لإدخال الصور والمستندات إلى الحاسوب، لذا يُصنف كجهاز إدخال وليس إخراج." },
+        { q: "Machine language is:", o: ["directly understood by computer", "consists of 0's and 1's", "difficult to use", "All Answers"], a: 3, exp: "لغة الآلة هي اللغة الوحيدة التي يفهمها الحاسوب مباشرة، وتتكون من أصفار وآحاد، وتعتبر صعبة جداً في القراءة والكتابة للمبرمجين." },
+        { q: "Which of the following statements is used to make a decision from a number of choices?", o: ["break", "switch", "for", "while"], a: 1, exp: "جملة (Switch) تُستخدم لاختيار مسار تنفيذ واحد من بين عدة مسارات أو خيارات (Cases) بناءً على قيمة المتغير." },
+        { q: "Which of the following is a loop that must have initialization, condition for termination, and counter increase?", o: ["for", "while", "do while", "if"], a: 0, exp: "حلقة (for loop) تتميز بأنها تجمع بين تهيئة العداد (Initialization)، الشرط (Condition)، ومقدار الزيادة أو النقصان (Increment/Decrement) في سطر واحد." },
+        { q: "What is required in each C program?", o: ["The program must have at least one function", "The program must process data", "The program must have input data", "The program must have output data"], a: 0, exp: "أي برنامج مكتوب بلغة C يجب أن يحتوي على الأقل على دالة واحدة، وهي الدالة الأساسية ()main التي يبدأ منها التنفيذ." },
+        { q: "The 'continue' statement:", o: ["takes control back to start of loop", "takes control outside the loop", "continues to program end", "None of the above"], a: 0, exp: "تعليمة (continue) تقوم بتخطي باقي الأوامر في التكرار الحالي (Iteration) وتعود إلى بداية الحلقة لبدء التكرار التالي." },
+        { q: "Which of the following is not a secondary storage device?", o: ["CD-ROM", "Hard disk", "Floppy disk", "RAM"], a: 3, exp: "الذاكرة العشوائية (RAM) هي ذاكرة أساسية (Primary Memory)، بينما الباقي يعتبر وسائط تخزين ثانوية (Secondary Storage)." },
+        { q: "Which of the following are characteristics of Computers?", o: ["No Intelligence", "Speed", "No Feeling", "All Answers"], a: 3, exp: "الحاسوب يتميز بالسرعة الفائقة ولكنه آلة مجردة لا تمتلك ذكاءً بشرياً (No Intelligence) أو مشاعر (No Feeling)." },
+        { q: "__________ are used for weather forecasting and biomedical research.", o: ["Microcomputers", "Mini Computers", "Supercomputers", "Mainframes"], a: 2, exp: "الحواسيب الفائقة (Supercomputers) تمتلك قدرات معالجة هائلة جداً تُستخدم في الحسابات المعقدة مثل التنبؤ بالطقس والأبحاث العلمية." },
+        { q: "What is the result of a logical or relational expression in C?", o: ["True or False", "0 or 1", "-1 or 1", "0 for false and any positive number for true"], a: 1, exp: "في لغة C، أي عملية مقارنة أو عملية منطقية تُرجع دائماً قيمة عددية صحيحة: 1 في حالة الصواب (True) و 0 في حالة الخطأ (False)." },
+        { q: "Which of the following loops will execute at least once even if the condition is false?", o: ["for loop", "while loop", "do-while loop", "All Answers"], a: 2, exp: "حلقة (do-while) تقوم بتنفيذ الأوامر داخلها أولاً، ثم تتحقق من الشرط في النهاية، لذا تُنفذ مرة واحدة على الأقل حتى لو كان الشرط خاطئاً." },
+        { q: "What is the purpose of a flowchart?", o: ["To write program code", "To compile data", "To visually represent the steps in a process", "To create a user interface"], a: 2, exp: "الهدف الرئيسي من المخطط الانسيابي هو توضيح وتسلسل الخطوات اللازمة لحل مشكلة معينة برمجياً بشكل رسومي ومرئي." },
+        { q: "The compiler is used to convert machine language to high level language.", o: ["True", "False"], a: 1, exp: "خطأ (False). المترجم (Compiler) يقوم بالعكس، حيث يحول الكود المكتوب بلغة عالية المستوى (High-level) إلى لغة الآلة (Machine language)." },
+        { q: "Low level language is more difficult to understand than High level language.", o: ["True", "False"], a: 0, exp: "صحيح (True). اللغات منخفضة المستوى (مثل Assembly ولغة الآلة) تتعامل مباشرة مع العتاد وتكون معقدة وصعبة الفهم مقارنة باللغات عالية المستوى الأقرب للغة البشر." },
+        { q: "Any variable can store different values during the program execution.", o: ["True", "False"], a: 0, exp: "صحيح (True). المتغير (Variable) سُمي بهذا الاسم لأن قيمته يمكن أن تتغير أو تُحدث في أي وقت أثناء تشغيل البرنامج." },
+        { q: "The variable of type 'int' is smaller than the variable of type 'short'.", o: ["True", "False"], a: 1, exp: "خطأ (False). المتغير من نوع (short) يكون عادةً بحجم 2 بايت، بينما الـ (int) يكون 4 بايت، لذا الـ int أكبر وليس أصغر." },
+        { q: "Which of the following is the correct sentence to read the value of an integer variable x from the user?", o: ["scanf(%d,x);", "scanf(\"%d\",x);", "scanf(\"%c\",&x);", "scanf(\"%d\",&x);"], a: 3, exp: "في لغة C، الدالة ()scanf تحتاج إلى تحديد نوع البيانات بين علامتي تنصيص \"%d\" وإضافة علامة & قبل المتغير لتحديد عنوانه في الذاكرة." },
+
+        // --- BATCH 3: THEORETICAL QUESTIONS FROM EXAMS (Set 2 - 2021) ---
+        { q: "_____ are instructions to the computer.", o: ["Hardware", "Software", "Programs", "Keyboards"], a: 2, exp: "البرامج (Programs) أو البرمجيات (Software) هي مجموعة من التعليمات التي تخبر الحاسوب بما يجب القيام به. وغالباً في هذا السياق تُعتبر Programs هي الإجابة الأدق للتعليمات المباشرة." },
+        { q: "_____ is an operating system.", o: ["Java", "C++", "Windows XP", "C"], a: 2, exp: "نظام التشغيل هو البرنامج الرئيسي الذي يدير الحاسوب، ومن أشهر أمثلته Windows XP، بينما البقية هي لغات برمجة." },
+        { q: "Computer can execute the code in:", o: ["machine language", "assembly language", "high-level language", "None"], a: 0, exp: "لغة الآلة (Machine Language) المكونة من أصفار وآحاد هي اللغة الوحيدة التي يفهمها المعالج وينفذها مباشرة دون الحاجة لمترجم." },
+        { q: "C Language is a ______ level language", o: ["Low", "High", "Low+High", "None"], a: 2, exp: "تُعرف لغة C بأنها لغة متوسطة المستوى (Middle-level) أو (Low+High) لأنها تجمع بين سهولة اللغات عالية المستوى وقدرة التحكم في العتاد الموجودة في اللغات منخفضة المستوى." },
+        { q: "Which is valid expression in c language?", o: ["int my_num=100,000;", "int my_num=100000;", "int my num=1000;", "int my num==10000;"], a: 1, exp: "في لغة C، لا يمكن استخدام المسافات أو الفواصل (Commas) في أسماء المتغيرات أو الأرقام. الصيغة الصحيحة هي كتابة الرقم بدون فواصل واسم المتغير متصل بـ Underscore." },
+        { q: "What is the precedence of arithmetic operators (from highest to lowest)?", o: ["%, *, /, +, -", "%, +, /, *, -", "+, -, %, *, /", "%, +, -, *, /"], a: 0, exp: "في لغة C، عمليات الضرب والقسمة وباقي القسمة (*, /, %) لها أولوية قصوى وتُنفذ أولاً، يليها الجمع والطرح (+, -)." },
+        { q: "Choose a right statement:", o: ["int myage = 10; int my_age = 10;", "int myage = 10; int my,age = 10;", "int myage = 10; int my age = 10;", "All are right."], a: 0, exp: "أسماء المتغيرات في لغة C يجب ألا تحتوي على مسافات أو رموز خاصة باستثناء الشرطة السفلية (Underscore). لذلك الفاصلة أو المسافة تجعل الاسم غير صالح." },
+        { q: "What is the meaning of below line? void sum (int, int);", o: ["sum is function which takes int arguments", "sum is a function which takes two int arguments and returns void", "it will produce compilation error", "Can't comment"], a: 1, exp: "هذا السطر يمثل إعلان لدالة (Function Prototype). كلمة void تعني أنها لا تُرجع قيمة، و (int, int) يعني أنها تستقبل متغيرين من النوع الصحيح." },
+        { q: "Which of the following is a logical OR operator?", o: ["!", "||", "|", "&&"], a: 1, exp: "المعامل || يُستخدم للتعبير عن العمليات المنطقية (Logical OR)، بينما | هو للعمليات على مستوى البت (Bitwise OR)." },
+        { q: "Which of the following is a logical AND operator?", o: ["!", "&&", "||", "&"], a: 1, exp: "المعامل && يمثل (Logical AND) في لغة C، بينما & يمثل (Bitwise AND)." },
+        { q: "Choose a right C Statement:", o: ["Loops executes a group of statements repeatedly", "Loop is usually executed as long as a condition is met", "Loops usually take advantage of Loop Counter", "All of the above"], a: 3, exp: "الحلقات التكرارية (Loops) تُستخدم لتكرار كود معين بناءً على شرط، وعادة ما تعتمد على عداد (Counter) للتحكم في عدد مرات التكرار." },
+        { q: "Choose a statement to use C If Else statement:", o: ["else if is compulsory to use with if statement", "else is compulsory to use with if statement", "else or else if is optional with if statement", "None of the above"], a: 2, exp: "يمكنك استخدام جملة if بمفردها للتحقق من شرط معين. إضافة else أو else if هو أمر اختياري يعتمد على المنطق المطلوب في البرنامج." },
+        { q: "Operator % in C Language is called:", o: ["Percentage Operator", "Division", "Quotient Operator", "Modulus"], a: 3, exp: "معامل % يُسمى (Modulus) ويُستخدم لحساب باقي القسمة الصحيحة بين رقمين." },
+        { q: "Choose facts about continue; statement in C Language?", o: ["used to take the execution control to next iteration", "causes the statements below it to skip", "usually accompanied by IF statement", "All of the above"], a: 3, exp: "تعليمة continue تتخطى باقي الأوامر في التكرار الحالي وتنتقل للتكرار التالي، ودائماً ما توضع داخل شرط if للتحكم بمتى يتم التخطي." },
+        { q: "What is the way to suddenly come out of or Quit any Loop in C Language?", o: ["continue; statement", "quit; statement", "break; statement", "leave; statement"], a: 2, exp: "تعليمة break هي الكلمة المحجوزة في لغة C التي تُستخدم للخروج الفوري (Quit) من الحلقة التكرارية أو جملة Switch." },
+        { q: "__________ translates high-level language program into machine language program.", o: ["An assembler", "A compiler", "CPU", "The operating system"], a: 1, exp: "المترجم (Compiler) هو البرنامج المسؤول عن تحويل الكود المكتوب بلغة عالية المستوى (مثل C) إلى لغة الآلة التي يفهمها المعالج." },
+        { q: "A C program is a combination of:", o: ["Statements", "Functions", "Variables", "All Answers"], a: 3, exp: "أي برنامج مكتوب بلغة C يتكون بشكل أساسي من متغيرات لتخزين البيانات، دوال لتنفيذ المهام، وعبارات أو أوامر برمجية (Statements)." },
+        { q: "Correct way of commenting a single line is:", o: ["/* comment", "// comment", "/* comment */", "/ comment /"], a: 1, exp: "لكتابة تعليق في سطر واحد (Single-line comment) في لغة C، نستخدم الشرطتين المائلتين //. أما /* ... */ فتُستخدم للتعليقات متعددة الأسطر." },
+        { q: "How many main() function we can have in our project?", o: ["0", "1", "No Limit", "Depends on Compiler"], a: 1, exp: "أي برنامج أو مشروع في لغة C يجب أن يحتوي على دالة main() واحدة فقط، لأنها نقطة البداية لتنفيذ البرنامج." },
+        { q: "Low level language is:", o: ["Human readable like language", "language with big program size", "language with small program size", "Difficult to understand and read"], a: 3, exp: "اللغات منخفضة المستوى مثل لغة الآلة والتجميع (Assembly) تتعامل مع العتاد مباشرة، لذا تكون صعبة الفهم والقراءة للمبرمجين مقارنة باللغات عالية المستوى." },
+        { q: "Which loop is faster in C Language?", o: ["For", "Do While", "While", "All work at same speed"], a: 3, exp: "جميع الحلقات التكرارية (for, while, do-while) تُترجم في النهاية إلى نفس أوامر لغة الآلة الأساسية تقريباً، لذا تعمل جميعها بنفس السرعة." },
+        { q: "What is the way to skip an iteration of any Loop in C Language?", o: ["continue; statement", "quit; statement", "break; statement", "leave; statement"], a: 0, exp: "لتخطي دورة واحدة (Iteration) فقط من التكرار والاستمرار في الدورة التي تليها، نستخدم الكلمة المحجوزة continue." },
+        { q: "Choose a correct statement about C break; statement.?", o: ["can be used inside switch block", "can be used with loops like for, while and do while", "causes only the same or inner loop where break; is present to quit suddenly", "All of the above"], a: 3, exp: "تعليمة break متعددة الاستخدامات، فهي تُنهي الـ switch وتُخرج البرنامج من أي حلقة تكرارية تتواجد داخلها مباشرة." },
+        { q: "Which function definition will run correctly?", o: ["int sum(int a, int b) return (a+b);", "int sum(int a, int b) {return (a+b);}", "int sum(a, b) return (a+b);", "none of the mentioned"], a: 1, exp: "الصيغة الصحيحة لتعريف الدالة يجب أن تحتوي على الأقواس المعكوفة {} لاحتواء أوامر الدالة بداخلها." },
+        { q: "Output of an arithmetic expression with integers and real numbers is by default?", o: ["Integer", "Real number", "Depends on the numbers used", "None of the above"], a: 1, exp: "عند إجراء عملية حسابية تجمع بين رقم صحيح (Integer) ورقم عشري (Real/Float)، يقوم المترجم تلقائياً بتحويل الناتج إلى رقم عشري لضمان عدم ضياع الدقة." },
+        { q: "Which of the following is not an arithmetic operation?", o: ["a*=10;", "a/=10;", "a!=10", "a%=10;"], a: 2, exp: "العمليات الحسابية تشمل الضرب، القسمة، وباقي القسمة. أما != فهو معامل مقارنة (Relational Operator) يعني 'لا يساوي' ولا يُعتبر عملية حسابية." },
+        { q: "Choose a correct statement regarding C Comparison operators:", o: ["== means equal, != means not equal", "< means less, > means greater", "<= means less/equal, >= means greater/equal", "All of the above"], a: 3, exp: "جميع هذه المعاملات تمثل معاملات المقارنة في لغة C بشكل صحيح لتحديد العلاقات بين القيم." },
+
+        // --- BATCH 4: NEW THEORETICAL QUESTIONS (2022, 2023, & Extra Images) ---
+        { q: "The C code 'for(;;)' represents an infinite loop. It can be terminated by", o: ["break", "exit(0)", "abort", "terminate"], a: 0, exp: "حلقة for(;;) تعتبر حلقة لا نهائية (Infinite Loop) لأنه لا يوجد شرط لإيقافها. الطريقة البرمجية الصحيحة لكسر هذه الحلقة والخروج منها هي استخدام تعليمة break." },
+        { q: "Which of the following is not a valid variable name declaration?", o: ["_a3", "int a_3;", "int 3_a;", "int_3a;"], a: 2, exp: "في لغة C، شروط تسمية المتغيرات تمنع أن يبدأ اسم المتغير برقم (مثل 3_a). يجب أن يبدأ بحرف أو علامة شرطة سفلية (Underscore)." },
+        { q: "Can a variable declared in a function be used in main()?", o: ["Yes", "No", "Varies", "None"], a: 1, exp: "المتغيرات المعرفة داخل دالة معينة تُسمى متغيرات محلية (Local Variables)، ولا يمكن التعرف عليها أو استخدامها خارج هذه الدالة، بما في ذلك دالة main." },
+        { q: "The name of the variable used in one function can be used in another function?", o: ["Yes", "No", "Varies", "None"], a: 0, exp: "نعم، يمكنك استخدام نفس اسم المتغير في دوال مختلفة لأن كل متغير محلي يكون مستقلاً تماماً ومحجوزاً في نطاق (Scope) الدالة الخاصة به فقط." },
+        { q: "Which of the following is a correct format for prototype of function?", o: ["return-type function-name(argument type);", "return-type function-name(argument type){}", "return-type (argument type)function-name;", "All Answers"], a: 0, exp: "الإعلان عن الدالة (Prototype) يتطلب تحديد نوع القيمة المُرجعة (return-type)، ثم اسم الدالة، ثم أنواع المدخلات (arguments) بين قوسين، ويجب أن ينتهي بفاصلة منقوطة (;)." },
+        { q: "Which loop is most suitable to first perform the operation and then test the condition?", o: ["for", "while", "do-while", "None"], a: 2, exp: "حلقة (do-while) هي الوحيدة التي تنفذ الكود (Operation) أولاً مرة واحدة على الأقل، ثم تتحقق من الشرط (Condition) في النهاية." },
+        { q: "_____ takes one statement of high-level languages, translate it into machine language and immediately executes it.", o: ["compiler", "interpreter", "assembler", "debugger"], a: 1, exp: "المفسر (Interpreter) يقوم بترجمة وتنفيذ الكود سطراً بسطر (عبارة بعبارة) فوراً، على عكس المترجم (Compiler) الذي يترجم البرنامج بالكامل قبل التنفيذ." },
+        { q: "_____ is a graphical representation of the sequence of operations in an information system or program.", o: ["pseudocode", "algorithm", "flowchart", "codeblock"], a: 2, exp: "المخطط الانسيابي (Flowchart) هو تمثيل رسومي وتسلسلي للخطوات والعمليات المنطقية اللازمة لحل المشكلة أو تشغيل البرنامج." },
+        { q: "High-Level Languages are easy to learn and use as it is relatively close to the human being languages.", o: ["True", "False"], a: 0, exp: "صحيح. اللغات عالية المستوى صُممت لتكون قريبة من لغة البشر وتستخدم مصطلحات إنجليزية مألوفة، مما يسهل تعلمها واستخدامها." },
+        { q: "There are _____ generations of computer systems.", o: ["two", "three", "four", "five"], a: 3, exp: "تاريخ تطور الحواسيب يُقسم إلى خمسة أجيال رئيسية (Five Generations)، بدءاً من الصمامات المفرغة وصولاً إلى الذكاء الاصطناعي." },
+        { q: "Multiple-spindle automatic bar machines use up to four spindles on a drum.", o: ["True", "False"], a: 1, exp: "الجملة (خاطئة). الماكينات الأوتوماتيكية متعددة الأعمدة يمكن أن تحتوي على 4، 6، أو حتى 8 أعمدة دوران (Spindles)، وليست مقتصرة على 4 كحد أقصى." },
+        { q: "Angle milling cutters produce tapered surfaces.", o: ["True", "False"], a: 0, exp: "صحيح. سكاكين الزوايا تُستخدم في عمليات التفريز لإنتاج أسطح مائلة أو غنفارية (Tapered surfaces)." },
+
+        // --- BATCH 5: NEW THEORETICAL QUESTIONS (Al-Makkawi & Alaa Abdelmohsen Bank Exclusives) ---
+        { q: "In C programming, array index always starts from:", o: ["0", "1", "-1", "Depends on the compiler"], a: 0, exp: "في لغة C، فهرس المصفوفة (Array Index) يبدأ دائماً من الصفر (0) وليس الواحد." },
+        { q: "Which of the following format specifiers is used to read or print an integer value?", o: ["%f", "%c", "%d", "%s"], a: 2, exp: "محدد الصيغة %d يُستخدم مع الأرقام الصحيحة (Integers)، بينما %f للأرقام العشرية، و %c للحروف." },
+        { q: "The default return type of the main() function in C language is:", o: ["void", "int", "float", "double"], a: 1, exp: "النوع الافتراضي للدالة الأساسية ()main في لغة C هو int، ولذلك نكتب دائماً return 0 في نهايتها." },
+        { q: "A variable that holds the memory address of another variable is known as:", o: ["Array", "Pointer", "Function", "Structure"], a: 1, exp: "المؤشر (Pointer) هو متغير خاص يُستخدم لتخزين عنوان الذاكرة (Memory Address) لمتغير آخر." },
+        { q: "In C, strings are simply arrays of characters terminated by:", o: ["Space", "Newline '\\n'", "Null character '\\0'", "Period '.'"], a: 2, exp: "النصوص (Strings) في لغة C هي عبارة عن مصفوفة من الحروف (Characters)، وتنتهي دائماً بحرف فارغ (Null character '\\0') ليعرف المترجم نهاية النص." },
+        { q: "What is the index of the last element in an array of size N?", o: ["N", "N-1", "N+1", "1"], a: 1, exp: "بما أن المصفوفات تبدأ من الفهرس 0، فإن آخر عنصر في مصفوفة حجمها N سيكون الفهرس الخاص به هو N-1." },
+        { q: "Which library function is used to output data to the screen?", o: ["scanf()", "printf()", "output()", "display()"], a: 1, exp: "الدالة ()printf هي المسؤولة عن طباعة وإخراج البيانات على الشاشة، وهي موجودة في مكتبة stdio.h." },
+        { q: "Variables declared inside a block or a function are called:", o: ["Global variables", "Local variables", "External variables", "Static variables"], a: 1, exp: "المتغيرات التي يتم تعريفها داخل دالة معينة تُسمى متغيرات محلية (Local Variables) ولا يمكن استخدامها خارج هذه الدالة." },
+        { q: "The preprocessor directive in C begins with which symbol?", o: ["$", "@", "#", "&"], a: 2, exp: "توجيهات المعالج المسبق (Preprocessor Directives) مثل include و define تبدأ دائماً برمز الشباك (#)." },
+        { q: "Which of the following is not a valid data type in standard C?", o: ["float", "char", "string", "int"], a: 2, exp: "لغة C لا تحتوي على نوع بيانات أساسي يسمى (string)، بل يتم تمثيل النصوص كمصفوفة من الحروف (char array)." },
+        { q: "To include standard input/output library in a C program, we use:", o: ["#include <stdio.h>", "#include <stdlib.h>", "#include <math.h>", "#include <string.h>"], a: 0, exp: "مكتبة stdio.h (Standard Input Output) هي المسؤولة عن دوال الإدخال والإخراج الأساسية مثل printf و scanf." },
+        { q: "The process of finding and fixing errors in a computer program is called:", o: ["Compiling", "Executing", "Debugging", "Linking"], a: 2, exp: "عملية البحث عن الأخطاء (Bugs) في الكود وإصلاحها تُسمى استكشاف الأخطاء وتصحيحها (Debugging)." },
+        { q: "A sequence of instructions written to perform a specified task on a computer is known as:", o: ["Hardware", "Computer Program", "Flowchart", "Processor"], a: 1, exp: "البرنامج الحاسوبي (Computer Program) هو سلسلة من التعليمات والأوامر المكتوبة لتنفيذ مهمة محددة." },
+        { q: "Which of the following translates the entire high-level program into machine code at once?", o: ["Interpreter", "Assembler", "Compiler", "Debugger"], a: 2, exp: "المترجم (Compiler) يقوم بقراءة وترجمة الكود بالكامل دفعة واحدة إلى لغة الآلة، بينما المفسر (Interpreter) يترجمه سطراً بسطر." },
+        { q: "Which symbol is used to end a statement in C?", o: ["Colon (:)", "Comma (,)", "Semicolon (;)", "Period (.)"], a: 2, exp: "كل تعليمة (Statement) في لغة C يجب أن تنتهي بفاصلة منقوطة (Semicolon) للإشارة إلى نهاية السطر البرمجي." }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+    const totalQ = questions.length;
+
+    function initQuiz() {
+        showQuestion();
+    }
+
+    function showQuestion() {
+        let q = questions[currentQ];
+        
+        document.getElementById('current-q-num').innerText = currentQ + 1;
+        document.getElementById('current-score').innerText = score;
+        
+        document.getElementById('progress').style.width = ((currentQ + 1) / totalQ * 100) + '%';
+        
+        document.getElementById('q-text').innerText = q.q;
+        
+        let optionsHtml = '';
+        q.o.forEach((opt, i) => {
+            optionsHtml += `
+                <div class="option" onclick="selectAnswer(this, ${i})">
+                    <div class="option-text">${opt}</div>
+                    <div class="option-status"></div>
+                </div>`;
+        });
+        document.getElementById('options-container').innerHTML = optionsHtml;
+        
+        let expBox = document.getElementById('explanation-box');
+        expBox.style.display = 'none';
+        expBox.classList.remove('wrong-exp', 'correct-exp');
+        
+        document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function selectAnswer(element, index) {
+        let q = questions[currentQ];
+        let correctIdx = q.a;
+        let allOptions = document.querySelectorAll('.option');
+        let expBox = document.getElementById('explanation-box');
+        
+        allOptions.forEach(opt => opt.classList.add('disabled'));
+        
+        if (index === correctIdx) {
+            element.classList.add('correct');
+            element.querySelector('.option-status').innerText = '✓ الإجابة الصح';
+            score++;
+            document.getElementById('current-score').innerText = score;
+            expBox.classList.add('correct-exp');
+        } else {
+            element.classList.add('wrong');
+            element.querySelector('.option-status').innerText = 'خطأ ✗';
+            
+            let correctElement = allOptions[correctIdx];
+            correctElement.classList.add('correct');
+            correctElement.querySelector('.option-status').innerText = '✓ الإجابة النموذجية';
+            
+            expBox.classList.add('wrong-exp');
+        }
+
+        document.getElementById('explanation-text').innerText = q.exp;
+        expBox.style.display = 'block';
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if (currentQ < totalQ) {
+            showQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-box').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
+        document.getElementById('final-score').innerText = score;
+        
+        document.getElementById('result-screen').innerHTML = `
+            <h2 class="header-title">انتهى الاختبار! 🎉</h2>
+            <hr class="divider">
+            <p style="font-size: 1.2rem; font-weight: 600; color: var(--text-gray);">لقد أتممت أسئلة النظري بنجاح</p>
+            <div class="result-score"><span>${score}</span> / ${totalQ}</div>
+            <button class="next-btn" style="display: block;" onclick="location.reload()">إعادة الاختبار ↺</button>
+        `;
+    }
+
+    // Modal Functions
+    function openModal() {
+        document.getElementById('secretModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('secretModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById('secretModal');
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    initQuiz();
+</script>
+
+</body>
+</html>
